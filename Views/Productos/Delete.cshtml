@@ -1,0 +1,36 @@
+﻿@model ProyectoPrograVI.Models.Producto
+
+@{
+    ViewData["Title"] = "Eliminar producto";
+}
+
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">¿Estás seguro que querés eliminar este producto?</h4>
+        </div>
+        <div class="card-body">
+            <p class="mb-2"><strong>Nombre:</strong> @Model.Nombre</p>
+            <p class="mb-2"><strong>Descripción:</strong> @Model.Descripcion</p>
+            <p class="mb-2"><strong>Precio:</strong> ₡@Model.Precio.ToString("N2")</p>
+            <p class="mb-2"><strong>En stock:</strong> @Model.CantStock unidades</p>
+            <p class="mb-4"><strong>Categoría ID:</strong> @Model.IdCategoria</p>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash3"></i> Eliminar definitivamente
+                </button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-arrow-left-circle"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
