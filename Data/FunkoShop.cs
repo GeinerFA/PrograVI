@@ -8,7 +8,7 @@ namespace ProyectoPrograVI.Data
 {
     public class FunkoShop
     {
-
+        //Conexion
         private readonly string _connectionString = "Server=GEINER\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Producto> GetAll()
