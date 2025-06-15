@@ -1,27 +1,33 @@
+// Program.cs
+using ProyectoPrograVI.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configurar DbContext con SQL Server
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FunkoShopConnection")));
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(); // soporte de sesiones
+builder.Services.AddHttpContextAccessor(); // acceso a HttpContext
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseSession(); // habilita el middleware de sesiones
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Cuenta}/{action=Login}/{id?}");
 
 app.Run();
