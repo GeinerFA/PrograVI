@@ -39,16 +39,24 @@
                                     <i class="bi bi-plus-circle"></i> Productos
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Cuenta" asp-action="Perfil">
+                                    <i class="bi bi-person-circle"></i> Mi perfil (@nombre)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Cuenta" asp-action="Logout">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                </a>
+                            </li>
                         }
-
-                        @if (!string.IsNullOrEmpty(rol))
+                        else if (!string.IsNullOrEmpty(rol))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Productos" asp-action="Index">
                                     <i class="bi bi-plus-circle"></i> Productos
                                 </a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Cuenta" asp-action="Perfil">
                                     <i class="bi bi-person-circle"></i> Mi perfil (@nombre)
