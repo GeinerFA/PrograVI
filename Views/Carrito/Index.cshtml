@@ -1,0 +1,68 @@
+﻿@model List<ProyectoPrograVI.Models.CarritoItem>
+@{
+    ViewData["Title"] = "Mi Carrito";
+    decimal total = Model.Sum(item => item.Subtotal);
+}
+
+<h2 class="mb-4">🛒 Mi Carrito</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Tu carrito está vacío.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                        {
+                            <img src="@item.ImagenUrl" alt="Imagen" style="max-height: 60px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Sin imagen</span>
+                        }
+                    </td>
+                    <td>@item.Nombre</td>
+                    <td>₡@item.Precio.ToString("N2")</td>
+                    <td>@item.Cantidad</td>
+                    <td>₡@item.Subtotal.ToString("N2")</td>
+                    <td>
+                        <a asp-action="Eliminar" asp-route-id="@item.IdProducto" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3"></i> Quitar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                <td colspan="2"><strong>₡@total.ToString("N2")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="text-end mt-3">
+        <a asp-controller="Productos" asp-action="Index" class="btn btn-secondary me-2">
+            <i class="bi bi-arrow-left-circle"></i> Seguir comprando
+        </a>
+        <a asp-action="FinalizarCompra" class="btn btn-success">
+            <i class="bi bi-credit-card"></i> Finalizar compra
+        </a>
+    </div>
+}

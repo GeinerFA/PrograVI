@@ -25,6 +25,7 @@
             <th>Precio</th>
             <th>Stock</th>
             <th>Categoría</th>
+            <th>Comprar</th>
             @if (rol == "Administrador")
             {
                 <th>Acciones</th>
@@ -45,11 +46,23 @@
                         <span class="text-muted">Sin imagen</span>
                     }
                 </td>
+
                 <td>@item.Nombre</td>
                 <td>@item.Descripcion</td>
                 <td>₡@item.Precio.ToString("N2")</td>
                 <td>@item.CantStock</td>
                 <td>@item.NombreCategoria</td>
+
+                <td>
+                    <form asp-controller="Carrito" asp-action="AgregarAlCarrito" method="post">
+                        <input type="hidden" name="idProducto" value="@item.Id" />
+                        <input type="number" name="cantidad" value="1" min="1" class="form-control form-control-sm mb-1" style="width: 80px; display: inline;" />
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-cart-plus"></i> Añadir
+                        </button>
+                    </form>
+                </td>
+
                 @if (rol == "Administrador")
                 {
                     <td>
@@ -63,5 +76,6 @@
                 }
             </tr>
         }
+
     </tbody>
 </table>
