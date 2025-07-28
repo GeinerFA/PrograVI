@@ -24,7 +24,7 @@
             <th>Descripción</th>
             <th>Precio</th>
             <th>Stock</th>
-            <th>Categoría</th>
+            @* <th>Categoría</th> *@
             <th>Comprar</th>
             @if (rol == "Administrador")
             {
@@ -51,7 +51,7 @@
                 <td>@item.Descripcion</td>
                 <td>₡@item.Precio.ToString("N2")</td>
                 <td>@item.CantStock</td>
-                <td>@item.NombreCategoria</td>
+                @* <td>@item.NombreCategoria</td> *@
 
                 <td>
                     <form asp-controller="Carrito" asp-action="AgregarAlCarrito" method="post">
