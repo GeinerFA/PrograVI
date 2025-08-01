@@ -8,7 +8,6 @@ namespace ProyectoPrograVI.Data
 {
     public class FunkoShop
     {
-        //Conexion
 
         public List<Producto> GetAll()
         {
@@ -30,7 +29,7 @@ namespace ProyectoPrograVI.Data
                         CantStock = (int)reader["cant_stock"],
                         IdCategoria = (int)reader["id_categoria"],
                         ImagenUrl = reader["imagen_url"] != DBNull.Value ? reader["imagen_url"].ToString() : null,
-                        NombreCategoria = reader["nombre_categoria"].ToString() // <-- Aquí el nombre de la categoría
+                        //NombreCategoria = reader["nombre_categoria"].ToString() // <-- Aquí el nombre de la categoría
                     });
                 }
             }
