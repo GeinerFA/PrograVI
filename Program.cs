@@ -3,6 +3,8 @@ using ProyectoPrograVI.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<FunkoShop>();
+builder.Services.AddHttpClient();
 
 // Configurar DbContext con SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

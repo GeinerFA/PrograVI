@@ -1,0 +1,91 @@
+﻿@model ProyectoPrograVI.Models.PagoRequest
+@{
+    ViewData["Title"] = "Finalizar Compra";
+    decimal total = ViewBag.Total;
+    var carrito = Context.Session.GetObject<List<ProyectoPrograVI.Models.CarritoItem>>("Carrito") ?? new List<ProyectoPrograVI.Models.CarritoItem>();
+}
+
+<h2 class="mb-4">✅ Finalizar Compra</h2>
+
+@if (!carrito.Any())
+{
+    <div class="alert alert-warning">El carrito está vacío</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Resumen de tu pedido</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in carrito)
+                            {
+                                <tr>
+                                    <td>@item.Nombre</td>
+                                    <td>@item.Cantidad</td>
+                                    <td>₡@item.Subtotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2">Total:</th>
+                                <th>₡@total.ToString("N2")</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>Procesar Pago</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Modo simulación activado:</strong>
+                        <ul class="mt-2">
+                            <li>Tarjeta de prueba: <code>4111 1111 1111 1111</code></li>
+                            <li>La API puede rechazar las pruebas, pero simularemos aprobación</li>
+                            <li>No se realizan cargos reales</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="ProcesarPago" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Monto" value="@total" />
+                        <input type="hidden" asp-for="NombreTarjeta" value="SIMULACION API" />
+                        <input type="hidden" asp-for="NumeroTarjeta" value="4111111111111111" />
+                        <input type="hidden" asp-for="FechaExpiracion" value="12/25" />
+                        <input type="hidden" asp-for="CVV" value="123" />
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                            <i class="bi bi-credit-card"></i> Procesar Pago Simulado
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorPago"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorPago"]
+    </div>
+}
