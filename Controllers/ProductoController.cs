@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoPrograVI.Models;
 using ProyectoPrograVI.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace ProyectoPrograVI.Controllers
 {
@@ -15,12 +17,13 @@ namespace ProyectoPrograVI.Controllers
 
         public IActionResult Index()
         {
-            var productos = _repositorio.GetAll();
+            var productos = _repositorio.GetAll(); // Devuelve también NombreCategoria
             return View(productos);
         }
 
         public IActionResult Create()
         {
+            ViewBag.Categorias = ObtenerSelectListCategorias();
             return View();
         }
 
@@ -33,6 +36,9 @@ namespace ProyectoPrograVI.Controllers
                 _repositorio.Insert(producto);
                 return RedirectToAction(nameof(Index));
             }
+
+            // Volver a cargar categorías si ocurre error en validación
+            ViewBag.Categorias = ObtenerSelectListCategorias();
             return View(producto);
         }
 
@@ -42,6 +48,7 @@ namespace ProyectoPrograVI.Controllers
             if (producto == null)
                 return NotFound();
 
+            ViewBag.Categorias = ObtenerSelectListCategorias();
             return View(producto);
         }
 
@@ -57,6 +64,8 @@ namespace ProyectoPrograVI.Controllers
                 _repositorio.Update(producto);
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Categorias = ObtenerSelectListCategorias();
             return View(producto);
         }
 
@@ -75,6 +84,17 @@ namespace ProyectoPrograVI.Controllers
         {
             _repositorio.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        // ✅ Método privado para convertir lista de categorías en SelectListItem
+        private List<SelectListItem> ObtenerSelectListCategorias()
+        {
+            return _repositorio.GetCategorias()
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Nombre
+                }).ToList();
         }
     }
 }

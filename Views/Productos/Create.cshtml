@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Nuevo producto";
+    var categorias = ViewBag.Categorias as List<SelectListItem>; // No repetir ni redefinir
 }
 
 <h2>Nuevo producto</h2>
@@ -10,28 +11,45 @@
     <div class="form-group">
         <label asp-for="Nombre"></label>
         <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="ImagenUrl"></label>
         <input asp-for="ImagenUrl" class="form-control" />
         <span asp-validation-for="ImagenUrl" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Descripcion"></label>
         <input asp-for="Descripcion" class="form-control" />
+        <span asp-validation-for="Descripcion" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Precio"></label>
         <input asp-for="Precio" class="form-control" />
+        <span asp-validation-for="Precio" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="CantStock"></label>
         <input asp-for="CantStock" class="form-control" />
+        <span asp-validation-for="CantStock" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label asp-for="IdCategoria"></label>
-        <input asp-for="IdCategoria" class="form-control" />
+        <label asp-for="IdCategoria">Categoría</label>
+        <select asp-for="IdCategoria" asp-items="categorias" class="form-control">
+            <option value="">Seleccione una categoría</option>
+        </select>
+        <span asp-validation-for="IdCategoria" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-success">Guardar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
