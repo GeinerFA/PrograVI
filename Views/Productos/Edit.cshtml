@@ -40,8 +40,10 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="IdCategoria"></label>
-        <input asp-for="IdCategoria" class="form-control" />
+        <label asp-for="IdCategoria">Categoría</label>
+        <select asp-for="IdCategoria" asp-items="ViewBag.Categorias" class="form-control">
+            <option value="">Seleccione una categoría</option>
+        </select>
         <span asp-validation-for="IdCategoria" class="text-danger"></span>
     </div>
 
@@ -50,7 +52,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

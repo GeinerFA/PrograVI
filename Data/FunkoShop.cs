@@ -3,7 +3,6 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using ProyectoPrograVI.Models;
 
-
 namespace ProyectoPrograVI.Data
 {
     public class FunkoShop
@@ -29,7 +28,7 @@ namespace ProyectoPrograVI.Data
                         CantStock = (int)reader["cant_stock"],
                         IdCategoria = (int)reader["id_categoria"],
                         ImagenUrl = reader["imagen_url"] != DBNull.Value ? reader["imagen_url"].ToString() : null,
-                        //NombreCategoria = reader["nombre_categoria"].ToString() // <-- Aquí el nombre de la categoría
+                        NombreCategoria = reader["nombre_categoria"].ToString()
                     });
                 }
             }
@@ -47,7 +46,7 @@ namespace ProyectoPrograVI.Data
                 cmd.Parameters.AddWithValue("@precio", producto.Precio);
                 cmd.Parameters.AddWithValue("@cant_stock", producto.CantStock);
                 cmd.Parameters.AddWithValue("@id_categoria", producto.IdCategoria);
-                cmd.Parameters.AddWithValue("@imagen_url", producto.ImagenUrl);
+                cmd.Parameters.AddWithValue("@imagen_url", producto.ImagenUrl ?? (object)DBNull.Value);
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -65,7 +64,7 @@ namespace ProyectoPrograVI.Data
                 cmd.Parameters.AddWithValue("@precio", producto.Precio);
                 cmd.Parameters.AddWithValue("@cant_stock", producto.CantStock);
                 cmd.Parameters.AddWithValue("@id_categoria", producto.IdCategoria);
-                cmd.Parameters.AddWithValue("@imagen_url", producto.ImagenUrl);
+                cmd.Parameters.AddWithValue("@imagen_url", producto.ImagenUrl ?? (object)DBNull.Value);
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -82,6 +81,7 @@ namespace ProyectoPrograVI.Data
                 cmd.ExecuteNonQuery();
             }
         }
+
         public List<Categoria> GetCategorias()
         {
             var lista = new List<Categoria>();
@@ -139,7 +139,53 @@ namespace ProyectoPrograVI.Data
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public List<Producto> ObtenerProductosFiltrados(string nombre, decimal? precio)
+        {
+            var lista = new List<Producto>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"SELECT p.id_producto, p.nombre, p.descripcion, p.precio, 
+                                p.cant_stock, p.id_categoria, p.imagen_url, c.nombre AS nombre_categoria
+                         FROM tbl_producto p
+                         INNER JOIN tbl_categoria c ON p.id_categoria = c.id_categoria
+                         WHERE 1 = 1";
+
+                if (!string.IsNullOrEmpty(nombre))
+                    query += " AND p.nombre LIKE @nombre";
+
+                if (precio.HasValue)
+                    query += " AND p.precio <= @precio";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (!string.IsNullOrEmpty(nombre))
+                        cmd.Parameters.AddWithValue("@nombre", "%" + nombre + "%");
+
+                    if (precio.HasValue)
+                        cmd.Parameters.AddWithValue("@precio", precio.Value);
+
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        lista.Add(new Producto
+                        {
+                            Id = (int)reader["id_producto"],
+                            Nombre = reader["nombre"].ToString(),
+                            Descripcion = reader["descripcion"].ToString(),
+                            Precio = (decimal)reader["precio"],
+                            CantStock = (int)reader["cant_stock"],
+                            IdCategoria = (int)reader["id_categoria"],
+                            ImagenUrl = reader["imagen_url"] != DBNull.Value ? reader["imagen_url"].ToString() : null,
+                            NombreCategoria = reader["nombre_categoria"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
+        }
     }
 }
-
-
