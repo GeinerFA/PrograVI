@@ -15,5 +15,8 @@ namespace ProyectoPrograVI.Models
     {
         public bool Aprobado { get; set; }
         public string Mensaje { get; set; }
+        public string IdTransaccion { get; set; }
+        public string MetodoPago { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
     }
 }

@@ -1,54 +1,58 @@
 ﻿@{
     ViewData["Title"] = "Confirmación de Pago";
-    var transactionId = ViewBag.TransactionId as string;
-    var total = ViewBag.Total as decimal? ?? 0;
-    var realApiResponse = ViewBag.RealApiResponse as bool? ?? false;
+    var aprobado = ViewBag.Aprobado as bool? ?? false;
+    var mensaje = ViewBag.Mensaje as string;
+    var monto = ViewBag.Monto as decimal? ?? 0;
 }
 
 <div class="container">
-    <div class="card border-success mb-4">
-        <div class="card-header bg-success text-white">
-            <h3><i class="bi bi-check-circle"></i> Confirmación de Pago</h3>
-        </div>
-        <div class="card-body">
-            @if (!string.IsNullOrEmpty(transactionId))
-            {
-                <div class="alert @(realApiResponse ? "alert-success" : "alert-warning")">
-                    <h4 class="alert-heading">
-                        <i class="bi @(realApiResponse ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill")"></i>
-                        @(realApiResponse ? "Pago Aprobado" : "Simulación Completa")
-                    </h4>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>ID de Transacción:</strong></p>
-                            <p class="h5">@transactionId</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Monto Total:</strong></p>
-                            <p class="h5">@total.ToString("C")</p>
-                        </div>
-                    </div>
-                    @if (!realApiResponse)
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header @(aprobado ? "bg-success" : "bg-danger") text-white">
+                    <h3 class="mb-0">
+                        <i class="bi @(aprobado ? "bi-check-circle" : "bi-x-circle")"></i>
+                        @(aprobado ? "Pago Aprobado" : "Pago Rechazado")
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (aprobado)
                     {
-                        <div class="mt-3 alert alert-info">
-                            <i class="bi bi-info-circle"></i> Esta transacción fue simulada porque la API no respondió correctamente.
+                        <div class="alert alert-success">
+                            <h4 class="alert-heading">¡Gracias por tu compra!</h4>
+                            <p>@mensaje</p>
+                            <hr>
+                            <p class="mb-0">Monto total: @monto.ToString("C")</p>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h5><i class="bi bi-info-circle"></i> Detalles del pedido</h5>
+                            <p>Recibirás un correo electrónico con los detalles de tu compra.</p>
+                            <p>Número de referencia: @Guid.NewGuid().ToString().Substring(0, 8).ToUpper()</p>
                         </div>
                     }
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-danger">
-                    <h4><i class="bi bi-exclamation-triangle-fill"></i> Error en el Pago</h4>
-                    <p>No se pudo completar la transacción. Por favor intente nuevamente.</p>
-                </div>
-            }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <h4 class="alert-heading">Lo sentimos</h4>
+                            <p>@mensaje</p>
+                            <hr>
+                            <p class="mb-0">Por favor intenta nuevamente o utiliza otro método de pago.</p>
+                        </div>
+                    }
 
-            <div class="d-grid gap-2 mt-4">
-                <a asp-controller="Productos" asp-action="Index" class="btn btn-primary">
-                    <i class="bi bi-arrow-left"></i> Volver a la Tienda
-                </a>
+                    <div class="d-grid gap-2 mt-4">
+                        <a asp-controller="Productos" asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Volver a la tienda
+                        </a>
+                        @if (!aprobado)
+                        {
+                            <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-cart"></i> Volver al carrito
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -85,6 +85,7 @@ namespace ProyectoPrograVI.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> FinalizarCompra(PagoRequest pagoRequest)
         {
             var carrito = ObtenerCarrito();
@@ -103,9 +104,16 @@ namespace ProyectoPrograVI.Controllers
 
             if (resultadoPago.Aprobado)
             {
+                // Limpiar el carrito
                 HttpContext.Session.Remove(CarritoSessionKey);
-                TempData["MensajeExito"] = $"Pago aprobado";
-                return RedirectToAction("Index", "Productos");
+
+                // Redirigir a la acción de confirmación con los datos necesarios
+                return RedirectToAction("Confirmacion", new
+                {
+                    aprobado = true,
+                    mensaje = resultadoPago.Mensaje,
+                    monto = carrito.Sum(item => item.Subtotal)
+                });
             }
             else
             {
@@ -113,6 +121,15 @@ namespace ProyectoPrograVI.Controllers
                 ViewBag.Total = carrito.Sum(item => item.Subtotal);
                 return View(pagoRequest);
             }
+        }
+
+        [HttpGet]
+        public IActionResult Confirmacion(bool aprobado, string mensaje, decimal monto)
+        {
+            ViewBag.Aprobado = aprobado;
+            ViewBag.Mensaje = mensaje;
+            ViewBag.Monto = monto;
+            return View();
         }
 
         private List<CarritoItem> ObtenerCarrito()

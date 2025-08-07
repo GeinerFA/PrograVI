@@ -23,24 +23,21 @@ namespace ProyectoPrograVI.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorMsg = await response.Content.ReadAsStringAsync();
                     return new PagoResponse
                     {
                         Aprobado = false,
-                        Mensaje = $"Error al conectar con la pasarela de pagos: {response.StatusCode} - {errorMsg}"
+                        Mensaje = $"Error en el pago: {response.StatusCode}"
                     };
                 }
 
-                // Leer el contenido como JSON
                 var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-
-                // Obtener el campo "mensaje" del JSON
-                var mensaje = json.GetProperty("mensaje").GetString();
 
                 return new PagoResponse
                 {
                     Aprobado = true,
-                    Mensaje = mensaje
+                    Mensaje = json.GetProperty("mensaje").GetString(),
+                    IdTransaccion = json.TryGetProperty("idTransaccion", out var idProp) ? idProp.GetString() : Guid.NewGuid().ToString(),
+                    MetodoPago = "Tarjeta de crédito"
                 };
             }
             catch (Exception ex)
@@ -48,7 +45,7 @@ namespace ProyectoPrograVI.Services
                 return new PagoResponse
                 {
                     Aprobado = false,
-                    Mensaje = $"Excepción: {ex.Message}"
+                    Mensaje = $"Error al procesar el pago: {ex.Message}"
                 };
             }
         }
