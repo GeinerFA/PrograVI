@@ -1,21 +1,37 @@
-// Program.cs
 using ProyectoPrograVI.Data;
+using ProyectoPrograVI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<FunkoShop>();
-builder.Services.AddHttpClient();
 
-// Configurar DbContext con SQL Server
+builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor(); // 
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FunkoShopConnection")));
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddSession(); // soporte de sesiones
-builder.Services.AddHttpContextAccessor(); // acceso a HttpContext
+
+builder.Services.AddHttpClient<PagoService>(client =>
+{
+    client.BaseAddress = new Uri("https://pagosapi-b8op.onrender.com/pago");
+});
+
+// Registro de servicios personalizados
+builder.Services.AddScoped<FunkoShop>();
+builder.Services.AddScoped<PagoService>();
+
+// Configuración de sesión
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
+// Configuración del pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -25,7 +41,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession(); // habilita el middleware de sesiones
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

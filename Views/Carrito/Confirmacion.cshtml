@@ -1,43 +1,53 @@
 ﻿@{
     ViewData["Title"] = "Confirmación de Pago";
-    var transactionId = ViewBag.TransactionId?.ToString() ?? "NO-GENERADO";
-    var total = ViewBag.Total?.ToString("C") ?? "0,00";
+    var transactionId = ViewBag.TransactionId as string;
+    var total = ViewBag.Total as decimal? ?? 0;
+    var realApiResponse = ViewBag.RealApiResponse as bool? ?? false;
 }
 
-<div class="container mt-4">
-    <div class="card border-success">
+<div class="container">
+    <div class="card border-success mb-4">
         <div class="card-header bg-success text-white">
             <h3><i class="bi bi-check-circle"></i> Confirmación de Pago</h3>
         </div>
         <div class="card-body">
-            @if (transactionId != "NO-GENERADO")
+            @if (!string.IsNullOrEmpty(transactionId))
             {
-                <div class="alert alert-success">
-                    <h4><i class="bi bi-check-circle"></i> ¡Transacción Exitosa!</h4>
-                    <div class="mt-3">
-                        <p><strong>ID Transacción:</strong> @transactionId</p>
-                        <p><strong>Monto:</strong> @total</p>
+                <div class="alert @(realApiResponse ? "alert-success" : "alert-warning")">
+                    <h4 class="alert-heading">
+                        <i class="bi @(realApiResponse ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill")"></i>
+                        @(realApiResponse ? "Pago Aprobado" : "Simulación Completa")
+                    </h4>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>ID de Transacción:</strong></p>
+                            <p class="h5">@transactionId</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Monto Total:</strong></p>
+                            <p class="h5">@total.ToString("C")</p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="alert alert-info">
-                    <h5><i class="bi bi-lightbulb"></i> Modo Simulación</h5>
-                    <p class="mb-0">
-                        Esta es una transacción simulada con datos de prueba.
-                    </p>
+                    @if (!realApiResponse)
+                    {
+                        <div class="mt-3 alert alert-info">
+                            <i class="bi bi-info-circle"></i> Esta transacción fue simulada porque la API no respondió correctamente.
+                        </div>
+                    }
                 </div>
             }
             else
             {
                 <div class="alert alert-danger">
-                    <h4><i class="bi bi-exclamation-triangle"></i> Error en la transacción</h4>
-                    <p>No se pudo generar un ID de transacción válido.</p>
+                    <h4><i class="bi bi-exclamation-triangle-fill"></i> Error en el Pago</h4>
+                    <p>No se pudo completar la transacción. Por favor intente nuevamente.</p>
                 </div>
             }
 
-            <div class="d-grid gap-2 mt-3">
+            <div class="d-grid gap-2 mt-4">
                 <a asp-controller="Productos" asp-action="Index" class="btn btn-primary">
-                    <i class="bi bi-arrow-left"></i> Volver a la tienda
+                    <i class="bi bi-arrow-left"></i> Volver a la Tienda
                 </a>
             </div>
         </div>

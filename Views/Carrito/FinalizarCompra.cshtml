@@ -1,91 +1,97 @@
 ﻿@model ProyectoPrograVI.Models.PagoRequest
 @{
     ViewData["Title"] = "Finalizar Compra";
-    decimal total = ViewBag.Total;
-    var carrito = Context.Session.GetObject<List<ProyectoPrograVI.Models.CarritoItem>>("Carrito") ?? new List<ProyectoPrograVI.Models.CarritoItem>();
 }
 
-<h2 class="mb-4">✅ Finalizar Compra</h2>
+<h2 class="mb-4">💳 Finalizar Compra</h2>
 
-@if (!carrito.Any())
+@if (TempData["MensajeError"] != null)
 {
-    <div class="alert alert-warning">El carrito está vacío</div>
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
 }
-else
-{
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5>Resumen de tu pedido</h5>
-                </div>
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in carrito)
-                            {
-                                <tr>
-                                    <td>@item.Nombre</td>
-                                    <td>@item.Cantidad</td>
-                                    <td>₡@item.Subtotal.ToString("N2")</td>
-                                </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="2">Total:</th>
-                                <th>₡@total.ToString("N2")</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Información de Pago</h4>
             </div>
-        </div>
+            <div class="card-body">
+                <form asp-action="FinalizarCompra" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5>Procesar Pago</h5>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning mt-3">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Modo simulación activado:</strong>
-                        <ul class="mt-2">
-                            <li>Tarjeta de prueba: <code>4111 1111 1111 1111</code></li>
-                            <li>La API puede rechazar las pruebas, pero simularemos aprobación</li>
-                            <li>No se realizan cargos reales</li>
-                        </ul>
+                    <div class="mb-3">
+                        <label asp-for="NumeroTarjeta" class="form-label">Número de Tarjeta</label>
+                        <input asp-for="NumeroTarjeta" class="form-control" placeholder="4111 1111 1111 1111" />
+                        <span asp-validation-for="NumeroTarjeta" class="text-danger"></span>
                     </div>
 
-                    <form asp-action="ProcesarPago" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="Monto" value="@total" />
-                        <input type="hidden" asp-for="NombreTarjeta" value="SIMULACION API" />
-                        <input type="hidden" asp-for="NumeroTarjeta" value="4111111111111111" />
-                        <input type="hidden" asp-for="FechaExpiracion" value="12/25" />
-                        <input type="hidden" asp-for="CVV" value="123" />
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label">Nombre del Titular</label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Ej: Juan Perez" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
 
-                        <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
-                            <i class="bi bi-credit-card"></i> Procesar Pago Simulado
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FechaVencimiento" class="form-label">Fecha de Expiración</label>
+                            <input asp-for="FechaVencimiento" class="form-control" placeholder="MM/YY" />
+                            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Icvv" class="form-label">CVV</label>
+                            <input asp-for="Icvv" class="form-control" placeholder="123" />
+                            <span asp-validation-for="Icvv" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Monto Total</label>
+                        <input class="form-control" value="₡@ViewBag.Total.ToString("N2")" readonly />
+                        <input type="hidden" asp-for="Monto" value="@ViewBag.Total" />
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-credit-card"></i> Pagar Ahora
                         </button>
-                    </form>
-                </div>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver al Carrito
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-}
 
-@if (TempData["ErrorPago"] != null)
-{
-    <div class="alert alert-danger mt-3">
-        <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorPago"]
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Datos de Prueba</h4>
+            </div>
+            <div class="card-body">
+                <h5>Tarjetas de Prueba:</h5>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">
+                        <strong>Visa:</strong> 4111 1111 1111 1111
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Mastercard:</strong> 5555 5555 5555 4444
+                    </li>
+                </ul>
+                <p class="text-muted">
+                    <small>
+                        Usa cualquier fecha futura y CVV de 3 dígitos.
+                        El pago será simulado.
+                    </small>
+                </p>
+            </div>
+        </div>
     </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
