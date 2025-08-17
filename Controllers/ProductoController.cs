@@ -96,5 +96,30 @@ namespace ProyectoPrograVI.Controllers
                     Text = c.Nombre
                 }).ToList();
         }
+        public IActionResult Detalle(int id)
+        {
+            var producto = _repositorio.GetAll().FirstOrDefault(p => p.Id == id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return View(producto);
+        }
+        public IActionResult Categoria(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return NotFound();
+
+            var productos = _repositorio.GetAll()
+                .Where(p => p.NombreCategoria.ToLower() == id.ToLower())
+                .ToList();
+
+            if (!productos.Any())
+                return View("CategoriaVacia", id); // Vista opcional si no hay productos
+
+            ViewBag.Categoria = id;
+            return View(productos);
+        }
     }
 }

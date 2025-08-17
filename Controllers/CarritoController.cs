@@ -142,5 +142,7 @@ namespace ProyectoPrograVI.Controllers
         {
             HttpContext.Session.SetObject(CarritoSessionKey, carrito);
         }
+
+
     }
 }

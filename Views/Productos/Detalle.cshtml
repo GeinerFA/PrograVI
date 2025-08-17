@@ -1,0 +1,97 @@
+﻿@model ProyectoPrograVI.Models.Producto
+
+@{
+    ViewData["Title"] = "Detalle del Producto";
+}
+
+<style>
+    .zoom-container {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        cursor: zoom-in;
+    }
+
+    .zoom-img {
+        width: 100%;
+        transition: transform 0.3s ease;
+        transform-origin: center center;
+    }
+
+    .zoom-container.zoomed .zoom-img {
+        transform: scale(2);
+        cursor: zoom-out;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.querySelector(".zoom-container");
+        const img = container.querySelector(".zoom-img");
+
+        let isZoomed = false;
+
+        container.addEventListener("click", function () {
+            isZoomed = !isZoomed;
+            container.classList.toggle("zoomed", isZoomed);
+        });
+
+        container.addEventListener("mousemove", function (e) {
+            if (!isZoomed) return;
+
+            const rect = container.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            img.style.transformOrigin = `${x}% ${y}%`;
+        });
+
+        container.addEventListener("mouseleave", function () {
+            if (isZoomed) {
+                img.style.transformOrigin = "center center";
+            }
+        });
+    });
+</script>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Imagen con zoom dinámico -->
+        <div class="col-md-5">
+            <div class="zoom-container">
+                <img src="@Model.ImagenUrl" class="img-fluid zoom-img" alt="@Model.Nombre" />
+            </div>
+        </div>
+
+        <!-- Detalles del producto -->
+        <div class="col-md-7">
+            <h2>@Model.Nombre</h2>
+            <p>@Model.Descripcion</p>
+            <h4 class="text-success">₡@Model.Precio.ToString("N2")</h4>
+            <p><strong>Categoría:</strong> @Model.NombreCategoria</p>
+            <p><strong>Disponibles:</strong> @Model.CantStock</p>
+
+            <!-- Formulario y botón de retroceso alineados -->
+            <div class="d-flex gap-2 align-items-end">
+                <form asp-controller="Carrito" asp-action="AgregarAlCarrito" method="post" class="d-flex flex-column">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="idProducto" value="@Model.Id" />
+
+                    <div class="form-group mb-2">
+                        <label for="cantidad">Cantidad:</label>
+                        <input type="number" name="cantidad" value="1" min="1" max="@Model.CantStock" class="form-control" style="width: 100px;" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
+                </form>
+
+                <a asp-action="Index" asp-controller="Productos" class="btn btn-secondary align-self-end">
+                    ← Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

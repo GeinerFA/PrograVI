@@ -1,8 +1,93 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "FunkoShop";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .uniform-img {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.3s ease;
+    }
+
+        .uniform-img:hover {
+            transform: scale(1.05);
+        }
+</style>
+
+<div class="container mt-4">
+
+    <!-- Banner principal -->
+    <div class="jumbotron bg-dark text-white p-5 rounded">
+        <h1 class="display-4">🎉 Bienvenido a FunkoShop</h1>
+        <p class="lead">Tu tienda favorita de figuras Funko Shop. ¡Colecciona, regala y sorprende!</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" asp-controller="Productos" asp-action="Index">Explorar Productos</a>
+    </div>
+
+    <!-- Categorías destacadas -->
+    <div class="row text-center mt-5">
+        <h2 class="mb-4">Categorías Populares</h2>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://static1.srcdn.com/wordpress/wp-content/uploads/2025/06/marvel-logo-on-comic-art-background.jpg" class="card-img-top uniform-img" alt="Marvel">
+                <div class="card-body">
+                    <h5 class="card-title">Marvel</h5>
+                    <a asp-controller="Productos" asp-action="Categoria" asp-route-id="marvel" class="btn btn-outline-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://blog.camaralia.com/wp-content/uploads/2016/01/Star-Wars-Blu-ray1.jpg" class="card-img-top uniform-img" alt="Star Wars">
+                <div class="card-body">
+                    <h5 class="card-title">Star Wars</h5>
+                    <a asp-controller="Productos" asp-action="Categoria" asp-route-id="starwars" class="btn btn-outline-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://m.media-amazon.com/images/I/719t3jd2NeL.png" class="card-img-top uniform-img" alt="Disney">
+                <div class="card-body">
+                    <h5 class="card-title">Disney</h5>
+                    <a asp-controller="Productos" asp-action="Categoria" asp-route-id="disney" class="btn btn-outline-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos destacados -->
+    <div class="mt-5">
+        <h2 class="text-center mb-4">🔥 Productos Destacados</h2>
+        <div class="row">
+
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="https://pophouse-cr.com/cdn/shop/products/IronheartMK21176_BlackPantherWakandaForever-Marvel_FunkoPop_-2.jpg?v=1681586131&width=700" class="card-img-top uniform-img" alt="Funko Iron Man">
+                    <div class="card-body">
+                        <h5 class="card-title">Iron Man</h5>
+                        <p class="card-text">₡12,500</p>
+                        <a asp-controller="Productos" asp-action="Detalle" asp-route-id="1" class="btn btn-success">Ver Producto</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw4c00548d/images/funko/upload/1/87126_POP-Animation-SLVL-Tankw-CH-GW-Lifestyle-PHOTO-06042025-LIGHT-1x1.jpg?sw=800&sh=800" class="card-img-top uniform-img" alt="Funko Solo Leveling">
+                    <div class="card-body">
+                        <h5 class="card-title">Solo Leveling</h5>
+                        <p class="card-text">₡7,500</p>
+                        <a asp-controller="Productos" asp-action="Detalle" asp-route-id="3" class="btn btn-success">Ver Producto</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>

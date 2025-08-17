@@ -1,0 +1,29 @@
+﻿@model List<Producto>
+@{
+    ViewData["Title"] = "Categoría: " + ViewBag.Categoria;
+}
+
+<h2 class="mb-4">Productos en @ViewBag.Categoria</h2>
+
+<!-- Botón para volver al Home -->
+<a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary mb-4">
+    🏠 Volver al inicio
+</a>
+
+<div class="row">
+    @foreach (var producto in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="@producto.ImagenUrl" class="card-img-top uniform-img" alt="@producto.Nombre">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@producto.Nombre</h5>
+                    <p class="card-text">₡@producto.Precio</p>
+                    <a asp-action="Detalle" asp-route-id="@producto.Id" class="btn btn-success mt-auto">Ver Producto</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Botón también al final por si el usuario scrollea -->
