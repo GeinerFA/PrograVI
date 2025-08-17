@@ -26,7 +26,6 @@
             <th>Precio</th>
             <th>Stock</th>
             <th>Categoría</th>
-            <th>Comprar</th>
             <th>Ver</th> <!-- Nueva columna -->
             @if (rol == "Administrador")
             {
@@ -54,15 +53,7 @@
                 <td>@item.CantStock</td>
                 <td>@item.NombreCategoria</td>
 
-                <td>
-                    <form asp-controller="Carrito" asp-action="AgregarAlCarrito" method="post">
-                        <input type="hidden" name="idProducto" value="@item.Id" />
-                        <input type="number" name="cantidad" value="1" min="1" class="form-control form-control-sm mb-1" style="width: 80px; display: inline;" />
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="bi bi-cart-plus"></i> Añadir
-                        </button>
-                    </form>
-                </td>
+               
 
                 <td>
                     <a asp-controller="Productos" asp-action="Detalle" asp-route-id="@item.Id" class="btn btn-info btn-sm">
