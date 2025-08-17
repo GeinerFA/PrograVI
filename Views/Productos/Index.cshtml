@@ -17,6 +17,44 @@
     </p>
 }
 
+<!-- 🔎 Formulario de filtros -->
+@using (Html.BeginForm("Index", "Productos", FormMethod.Get))
+{
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" name="nombre" class="form-control" placeholder="Buscar por nombre" value="@ViewBag.Nombre" />
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="0.01" name="precioMin" class="form-control" placeholder="Precio mínimo" value="@ViewBag.PrecioMin" />
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="0.01" name="precioMax" class="form-control" placeholder="Precio máximo" value="@ViewBag.PrecioMax" />
+        </div>
+        <div class="col-md-3">
+            <select name="categoria" class="form-control">
+                <option value="">-- Todas las categorías --</option>
+                @foreach (var cat in ViewBag.Categorias as List<string>)
+                {
+                    if (ViewBag.Categoria == cat)
+                    {
+                        <option value="@cat" selected>@cat</option>
+                    }
+                    else
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success w-100">
+                <i class="bi bi-search"></i> Filtrar
+            </button>
+        </div>
+    </div>
+}
+
+<!-- 📋 Tabla de productos -->
 <table class="table table-bordered table-striped align-middle text-center">
     <thead class="table-dark">
         <tr>
@@ -26,7 +64,7 @@
             <th>Precio</th>
             <th>Stock</th>
             <th>Categoría</th>
-            <th>Ver</th> <!-- Nueva columna -->
+            <th>Ver</th>
             @if (rol == "Administrador")
             {
                 <th>Acciones</th>
@@ -52,8 +90,6 @@
                 <td>₡@item.Precio.ToString("N2")</td>
                 <td>@item.CantStock</td>
                 <td>@item.NombreCategoria</td>
-
-               
 
                 <td>
                     <a asp-controller="Productos" asp-action="Detalle" asp-route-id="@item.Id" class="btn btn-info btn-sm">

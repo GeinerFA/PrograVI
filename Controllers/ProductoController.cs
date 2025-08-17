@@ -15,10 +15,39 @@ namespace ProyectoPrograVI.Controllers
             _repositorio = new FunkoShop();
         }
 
-        public IActionResult Index()
+        // ✅ Index con filtros por nombre, precio y categoría
+        public IActionResult Index(string nombre, decimal? precioMin, decimal? precioMax, string categoria)
         {
-            var productos = _repositorio.GetAll(); // Devuelve también NombreCategoria
-            return View(productos);
+            var productos = _repositorio.GetAll().AsQueryable();
+
+            // Filtrar por nombre
+            if (!string.IsNullOrEmpty(nombre))
+                productos = productos.Where(p => p.Nombre.Contains(nombre, StringComparison.OrdinalIgnoreCase));
+
+            // Filtrar por precio mínimo
+            if (precioMin.HasValue)
+                productos = productos.Where(p => p.Precio >= precioMin.Value);
+
+            // Filtrar por precio máximo
+            if (precioMax.HasValue)
+                productos = productos.Where(p => p.Precio <= precioMax.Value);
+
+            // Filtrar por categoría
+            if (!string.IsNullOrEmpty(categoria))
+                productos = productos.Where(p => p.NombreCategoria.Equals(categoria, StringComparison.OrdinalIgnoreCase));
+
+            // Mantener valores en ViewBag para los inputs de filtro
+            ViewBag.Nombre = nombre;
+            ViewBag.PrecioMin = precioMin;
+            ViewBag.PrecioMax = precioMax;
+            ViewBag.Categoria = categoria;
+
+            // Lista de categorías para dropdown
+            ViewBag.Categorias = _repositorio.GetCategorias()
+                                              .Select(c => c.Nombre)
+                                              .ToList();
+
+            return View(productos.ToList());
         }
 
         public IActionResult Create()
@@ -37,7 +66,6 @@ namespace ProyectoPrograVI.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Volver a cargar categorías si ocurre error en validación
             ViewBag.Categorias = ObtenerSelectListCategorias();
             return View(producto);
         }
@@ -86,40 +114,40 @@ namespace ProyectoPrograVI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Método privado para convertir lista de categorías en SelectListItem
-        private List<SelectListItem> ObtenerSelectListCategorias()
-        {
-            return _repositorio.GetCategorias()
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Nombre
-                }).ToList();
-        }
         public IActionResult Detalle(int id)
         {
             var producto = _repositorio.GetAll().FirstOrDefault(p => p.Id == id);
             if (producto == null)
-            {
                 return NotFound();
-            }
 
             return View(producto);
         }
+
         public IActionResult Categoria(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return NotFound();
 
             var productos = _repositorio.GetAll()
-                .Where(p => p.NombreCategoria.ToLower() == id.ToLower())
-                .ToList();
+                                        .Where(p => p.NombreCategoria.ToLower() == id.ToLower())
+                                        .ToList();
 
             if (!productos.Any())
-                return View("CategoriaVacia", id); // Vista opcional si no hay productos
+                return View("CategoriaVacia", id);
 
             ViewBag.Categoria = id;
             return View(productos);
+        }
+
+        // ✅ Método privado para convertir lista de categorías en SelectListItem
+        private List<SelectListItem> ObtenerSelectListCategorias()
+        {
+            return _repositorio.GetCategorias()
+                               .Select(c => new SelectListItem
+                               {
+                                   Value = c.Id.ToString(),
+                                   Text = c.Nombre
+                               }).ToList();
         }
     }
 }
