@@ -94,6 +94,24 @@ namespace ProyectoPrograVI.Controllers
                 return RedirectToAction("Index");
             }
 
+            foreach (var item in carrito)
+            {
+                var producto = _repositorio.GetAll().FirstOrDefault(p => p.Id == item.IdProducto);
+                if (producto == null || producto.CantStock < item.Cantidad)
+                {
+                    ModelState.AddModelError("", $"No hay suficiente stock para: {item.Nombre}");
+                    ViewBag.Total = carrito.Sum(item => item.Subtotal);
+                    return View(pagoRequest);
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Total = carrito.Sum(item => item.Subtotal);
+                return View(pagoRequest);
+            }
+
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Total = carrito.Sum(item => item.Subtotal);

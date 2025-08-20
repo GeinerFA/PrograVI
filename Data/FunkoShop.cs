@@ -241,9 +241,10 @@ namespace ProyectoPrograVI.Data
 
                 int pedidoId = (int)cmd.ExecuteScalar();
 
-                // Insertar Detalles
+                // Insertar Detalles y actualizar stock
                 foreach (var d in pedido.Detalles)
                 {
+                    // Insertar detalle
                     var cmdDetalle = new SqlCommand(@"
                 INSERT INTO PedidoDetalles (PedidoId, ProductoId, NombreProducto, Precio, Cantidad, Subtotal)
                 VALUES (@PedidoId, @ProductoId, @NombreProducto, @Precio, @Cantidad, @Subtotal)", conn, tran);
@@ -256,15 +257,26 @@ namespace ProyectoPrograVI.Data
                     cmdDetalle.Parameters.AddWithValue("@Subtotal", d.Subtotal);
 
                     cmdDetalle.ExecuteNonQuery();
+
+                    // Actualizar stock del producto
+                    var cmdStock = new SqlCommand(@"
+                UPDATE tbl_producto 
+                SET cant_stock = cant_stock - @cantidad 
+                WHERE id_producto = @productoId", conn, tran);
+
+                    cmdStock.Parameters.AddWithValue("@productoId", d.ProductoId);
+                    cmdStock.Parameters.AddWithValue("@cantidad", d.Cantidad);
+                    cmdStock.ExecuteNonQuery();
                 }
 
                 tran.Commit();
                 return pedidoId;
             }
-            catch
+            catch (Exception ex)
             {
                 tran.Rollback();
-                throw;
+                // Log the error (consider using ILogger)
+                throw new Exception("Error al crear el pedido: " + ex.Message);
             }
         }
 
@@ -526,6 +538,23 @@ namespace ProyectoPrograVI.Data
             }
 
             return pedidos;
+        }
+
+        public void ActualizarStockProducto(int productoId, int cantidadVendida)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(@"
+            UPDATE tbl_producto 
+            SET cant_stock = cant_stock - @cantidad 
+            WHERE id_producto = @productoId AND cant_stock >= @cantidad", conn);
+
+                cmd.Parameters.AddWithValue("@productoId", productoId);
+                cmd.Parameters.AddWithValue("@cantidad", cantidadVendida);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
 
     }
