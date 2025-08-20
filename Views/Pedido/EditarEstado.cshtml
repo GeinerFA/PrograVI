@@ -1,0 +1,25 @@
+﻿@model ProyectoPrograVI.Models.Pedido
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Editar Estado del Pedido";
+}
+
+<h2>Editar Estado del Pedido @Model.Id</h2>
+
+<form asp-action="EditarEstado" method="post">
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="mb-3">
+        <label class="form-label">Estado</label>
+        @Html.DropDownListFor(
+        m => m.Estado,
+                new SelectList((IEnumerable<SelectListItem>)ViewBag.Estados, "Value", "Text", Model.Estado),
+                new { @class = "form-select" }
+                )
+        @Html.ValidationMessageFor(m => m.Estado, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

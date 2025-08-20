@@ -1,0 +1,47 @@
+﻿@model ProyectoPrograVI.Models.Pedido
+
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+
+    // Determinar clase del badge con la misma lógica del listado
+    var badgeClass =
+        Model.Estado == "En Proceso" ? "bg-warning text-dark" :
+        Model.Estado == "Enviado" ? "bg-info text-dark" :
+        "bg-success"; // cualquier otro caso (incluye "Entregado")
+}
+
+<h2 class="mb-4">📑 Detalle del Pedido #@Model.Id</h2>
+
+<div class="card mb-4 p-3">
+    <h4>🧾 Información del Pedido</h4>
+    <p><strong>Usuario:</strong> @Model.Usuario (@Model.UserId)</p>
+    <p><strong>Dirección:</strong> @Model.Direccion</p>
+    <p><strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy HH:mm")</p>
+    <p><strong>Estado:</strong> <span class="badge @badgeClass">@Model.Estado</span></p>
+    <p><strong>Total:</strong> ₡@Model.Total</p>
+</div>
+
+<h4>📦 Productos Comprados</h4>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Detalles)
+        {
+            <tr>
+                <td>@item.NombreProducto</td>
+                <td>@item.Cantidad</td>
+                <td>₡@item.Precio</td>
+                <td>₡@item.Subtotal</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" asp-controller="Pedido" class="btn btn-secondary mt-3">⬅ Volver al Listado</a>

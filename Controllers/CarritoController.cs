@@ -104,23 +104,46 @@ namespace ProyectoPrograVI.Controllers
 
             if (resultadoPago.Aprobado)
             {
-                // Limpiar el carrito
+                // ✅ Recuperar datos del usuario desde Session
+                var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+                var nombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+
+                var pedido = new Pedido
+                {
+                    UserId = usuarioId?.ToString() ?? "Anonimo",
+                    Usuario = nombreUsuario ?? "Anonimo",   // ✅ aquí guardamos el nombre
+                    Fecha = DateTime.Now,                   // 👈 también la fecha
+                    Total = carrito.Sum(c => c.Subtotal),
+                    Estado = "En Proceso",
+                    Detalles = carrito.Select(c => new PedidoDetalle
+                    {
+                        ProductoId = c.IdProducto,
+                        NombreProducto = c.Nombre,
+                        Precio = c.Precio,
+                        Cantidad = c.Cantidad,
+                        Subtotal = c.Subtotal
+                    }).ToList()
+                };
+
+                var repoPedido = new FunkoShop();
+                int pedidoId = repoPedido.CrearPedido(pedido);
+
+                // Vaciar carrito
                 HttpContext.Session.Remove(CarritoSessionKey);
 
-                // Redirigir a la acción de confirmación con los datos necesarios
                 return RedirectToAction("Confirmacion", new
                 {
                     aprobado = true,
                     mensaje = resultadoPago.Mensaje,
-                    monto = carrito.Sum(item => item.Subtotal)
+                    monto = pedido.Total,
+                    usuario = nombreUsuario // 👈 opcional, si quieres mostrarlo en la vista
                 });
             }
-            else
-            {
-                TempData["MensajeError"] = $"Error en el pago: {resultadoPago.Mensaje}";
-                ViewBag.Total = carrito.Sum(item => item.Subtotal);
-                return View(pagoRequest);
-            }
+
+            // Si no fue aprobado, devolver la vista de pago con el mensaje
+            ViewBag.Total = carrito.Sum(item => item.Subtotal);
+            ViewBag.Mensaje = resultadoPago.Mensaje;
+            return View(pagoRequest);
         }
 
         [HttpGet]

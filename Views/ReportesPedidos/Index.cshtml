@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Reporte de Pedidos";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-file-earmark-text"></i> Reporte de Pedidos</h4>
+        </div>
+        <div class="card-body">
+            <form id="formFiltrosPedidos" class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="usuario" placeholder="Buscar por usuario" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="estado" placeholder="Buscar por estado" />
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel"></i> Filtrar
+                    </button>
+                    <button id="btnGenerarPDFPedidos" type="button" class="btn btn-danger">
+                        <i class="bi bi-file-earmark-pdf"></i> Generar PDF
+                    </button>
+                    <button id="btnGenerarCSVPedidos" type="button" class="btn btn-success">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Generar CSV
+                    </button>
+                </div>
+            </form>
+
+            <div id="contenedorReportePedidos" class="table-responsive">
+                @Html.Partial("_TablaReporte", new List<ProyectoPrograVI.Models.Pedido>())
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Filtrar con AJAX
+            $("#formFiltrosPedidos").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("ObtenerReporte", "ReportesPedidos")',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (html) {
+                        $("#contenedorReportePedidos").html(html);
+                    }
+                });
+            });
+
+            // Generar PDF
+            $("#btnGenerarPDFPedidos").on("click", function () {
+                const doc = new jspdf.jsPDF();
+                doc.text("Reporte de Pedidos", 14, 16);
+                doc.autoTable({ html: '#tablaReporte', startY: 20 });
+                doc.save('reporte-pedidos.pdf');
+            });
+
+            // Generar CSV
+            $("#btnGenerarCSVPedidos").on("click", function () {
+                const filas = document.querySelectorAll("#tablaReporte tbody tr");
+                if (filas.length === 0) return;
+
+                let csv = "ID,Usuario,Fecha,Total,Estado,UserId\n";
+                filas.forEach(fila => {
+                    const celdas = fila.querySelectorAll("td");
+                    const filaCSV = Array.from(celdas).map(td => `"${td.innerText}"`).join(",");
+                    csv += filaCSV + "\n";
+                });
+
+                const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "reporte-pedidos.csv";
+                link.click();
+            });
+        });
+    </script>
+}

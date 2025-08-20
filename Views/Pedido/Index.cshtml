@@ -1,0 +1,67 @@
+﻿@model List<ProyectoPrograVI.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Gestión de Pedidos";
+    var rol = Context.Session.GetString("Rol"); // 👈 Rol de sesión
+}
+
+<h2 class="mb-4">📦 Gestión de Pedidos</h2>
+
+<table class="table table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+           <th class="text-center">Acciones</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@(string.IsNullOrEmpty(p.Usuario) ? "Anónimo" : p.Usuario)</td>
+                    <td>@p.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>₡@p.Total.ToString("N2")</td>
+                    <td>
+                        <span class="badge
+                                    @(p.Estado == "En Proceso" ? "bg-warning text-dark" :
+                                                            p.Estado == "Enviado" ? "bg-info text-dark" :
+                                                            "bg-success")">
+                            @p.Estado
+                        </span>
+                    </td>
+
+                    <td class="text-center">
+                        @if (rol == "Administrador")
+                        {
+                        
+                                <a asp-action="EditarEstado" asp-route-id="@p.Id" class="btn btn-sm btn-primary">
+                                    ✏️ Cambiar Estado
+                                </a>
+              
+                        }
+                        <a asp-action="DetallePedido" asp-route-id="@p.Id" class="btn btn-info btn-sm">
+                            📑 Detalle Pedido
+                        </a>
+                    </td>
+
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="@(rol == "Administrador" ? 6 : 5)" class="text-center text-muted">
+                    No hay pedidos registrados.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

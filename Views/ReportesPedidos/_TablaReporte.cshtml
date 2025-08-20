@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ProyectoPrograVI.Models.Pedido>
+
+<table id="tablaReporte" class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Usuario</td>
+                <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@p.Total</td>
+                <td>@p.Estado</td>
+            </tr>
+        }
+    </tbody>
+</table>
