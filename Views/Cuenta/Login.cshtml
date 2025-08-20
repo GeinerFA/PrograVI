@@ -1,15 +1,173 @@
 ﻿@{
-    ViewData["Title"] = "Iniciar Sesión";
+    ViewData["Title"] = "Iniciar Sesión - Funko Shop";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</h4>
+<style>
+    .funko-bg {
+        background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 1000px;
+        width: 90%;
+    }
+
+    .funko-side {
+        background: linear-gradient(45deg, #3498db, #2ecc71);
+        color: white;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .funko-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .form-side {
+        padding: 3rem;
+    }
+
+    .funko-btn {
+        background: linear-gradient(45deg, #3498db, #2ecc71);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 30px;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .funko-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 2px solid #e3f2fd;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+    .funko-title {
+        font-family: 'Bangers', cursive;
+        letter-spacing: 2px;
+        color: #3498db;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-funko {
+        border: 2px solid #3498db;
+        color: #3498db;
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-funko:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .alert-danger {
+        background-color: #ffeaea;
+        color: #e74c3c;
+    }
+
+    .alert-success {
+        background-color: #e8f5e8;
+        color: #27ae60;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .text-muted {
+        color: #7f8c8d !important;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+    }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e3f2fd;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="funko-bg py-5">
+    <div class="login-container">
+        <div class="row g-0">
+            <div class="col-md-5 d-none d-md-block">
+                <div class="funko-side text-center">
+                    <div class="funko-icon">🧸</div>
+                    <h1 class="funko-title display-4">FUNKO SHOP</h1>
+                    <p class="mt-3">¡La mejor colección de Funkos está aquí!</p>
+                    <div class="mt-4">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect x='50' y='20' width='100' height='60' rx='10' fill='%233498db'/%3E%3Ccircle cx='80' y='40' r='8' fill='white'/%3E%3Ccircle cx='120' y='40' r='8' fill='white'/%3E%3Cpath d='M70,70 Q100,90 130,70' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E"
+                             alt="Funko Character" width="150" class="img-fluid">
+                    </div>
+                    <p class="mt-4"><i class="bi bi-star-fill"></i> Coleccionables exclusivos <i class="bi bi-star-fill"></i></p>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="col-md-7">
+                <div class="form-side">
+                    <div class="text-center mb-4">
+                        <h2 class="funko-title">INICIAR SESIÓN</h2>
+                        <p class="text-muted">Accede a tu cuenta para comenzar a comprar</p>
+                    </div>
+
                     @if (ViewBag.Mensaje != null)
                     {
                         <div class="alert alert-danger">@ViewBag.Mensaje</div>
@@ -20,34 +178,65 @@
                         <div class="alert alert-success">@TempData["MensajeRegistro"]</div>
                     }
 
-                    <form asp-action="Login" method="post">
-                        <div class="form-floating mb-3">
-                            <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required />
-                            <label>Email</label>
+                    <form action="/Cuenta/Login" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <input type="email" name="email" class="form-control" required />
                         </div>
 
-                        <div class="form-floating mb-4">
-                            <input type="password" name="password" class="form-control" placeholder="Contraseña" required />
-                            <label>Contraseña</label>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required />
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Registrar" class="btn btn-secondary">
-                                <i class="bi bi-person-plus"></i> Registrarse
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn funko-btn">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Entrar a mi cuenta
                             </button>
                         </div>
                     </form>
+
+                    <div class="divider">
+                        <span>O</span>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-3">¿No tienes una cuenta?</p>
+                        <a href="/Cuenta/Registrar" class="btn btn-outline-funko">
+                            <i class="bi bi-person-plus me-2"></i> Crear cuenta nueva
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <small class="text-muted">Al ingresar, aceptas nuestros términos y condiciones</small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página cargada - formulario listo');
+
+        // Forzar el enfoque en el primer campo
+        document.querySelector('input[name="email"]')?.focus();
+
+        // Verificar que el formulario existe
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                console.log('Formulario enviado');
+            });
+        }
+
+        // Verificar que el botón de registro funciona
+        const registerBtn = document.querySelector('a[href="/Cuenta/Registrar"]');
+        if (registerBtn) {
+            registerBtn.addEventListener('click', function() {
+                console.log('Redirigiendo a registro');
+            });
+        }
+    });
+</script>

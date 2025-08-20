@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProyectoPrograVI.Data;
 using ProyectoPrograVI.Models;
-using System.Security.Claims; // 👈 para acceder al userId
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace ProyectoPrograVI.Controllers
 {
@@ -19,7 +20,22 @@ namespace ProyectoPrograVI.Controllers
         // Listar todos los pedidos
         public IActionResult Index()
         {
-            var pedidos = _repositorio.GetAllPedido();
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+            var rol = HttpContext.Session.GetString("Rol");
+
+            List<Pedido> pedidos;
+
+            if (rol == "Administrador")
+            {
+                // Administradores ven todos los pedidos
+                pedidos = _repositorio.GetAllPedido();
+            }
+            else
+            {
+                // Usuarios normales ven solo sus pedidos
+                pedidos = _repositorio.GetPedidosByUsuarioId(usuarioId.ToString());
+            }
+
             return View(pedidos);
         }
 
@@ -70,6 +86,13 @@ namespace ProyectoPrograVI.Controllers
         [HttpGet]
         public IActionResult EditarEstado(int id)
         {
+            // Verificar permisos antes de editar
+            var rol = HttpContext.Session.GetString("Rol");
+            if (rol != "Administrador")
+            {
+                return RedirectToAction("Index", "Home"); // O mostrar error de permisos
+            }
+
             var pedido = _repositorio.GetById(id);
 
             if (pedido == null)
@@ -77,7 +100,6 @@ namespace ProyectoPrograVI.Controllers
                 return NotFound();
             }
 
-            // Lista de estados
             ViewBag.Estados = new List<SelectListItem>
             {
                 new SelectListItem { Value = "En Proceso", Text = "En Proceso" },
@@ -116,11 +138,21 @@ namespace ProyectoPrograVI.Controllers
         }
         public IActionResult DetallePedido(int id)
         {
-            var repo = new FunkoShop();
-            var pedido = repo.ObtenerDetallepedido(id);
-            if (pedido == null) return NotFound();
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+            var rol = HttpContext.Session.GetString("Rol");
 
-            return View("DetallePedido", pedido); // fuerza a usar DetallePedido.cshtml
+            var pedido = _repositorio.ObtenerDetallepedido(id);
+
+            if (pedido == null)
+                return NotFound();
+
+            // Verificar que el usuario tenga permiso para ver este pedido
+            if (rol != "Administrador" && pedido.UserId != usuarioId.ToString())
+            {
+                return RedirectToAction("Index", "Home"); // O mostrar error de permisos
+            }
+
+            return View("DetallePedido", pedido);
         }
 
 

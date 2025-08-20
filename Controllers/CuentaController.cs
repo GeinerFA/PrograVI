@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class CuentaController : Controller
 {
-    private readonly string _connectionString = "Server=JOHAN-MOYA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
+    private readonly string _connectionString = "Server=DEKTOP-EDWIN-MA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
 
     public IActionResult Login() => View();
 

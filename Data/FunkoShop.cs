@@ -7,7 +7,7 @@ namespace ProyectoPrograVI.Data
 {
     public class FunkoShop
     {
-        private readonly string _connectionString = "Server=JOHAN-MOYA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
+        private readonly string _connectionString = "Server=DEKTOP-EDWIN-MA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
         public List<Producto> GetAll()
         {
             var lista = new List<Producto>();
@@ -490,6 +490,42 @@ namespace ProyectoPrograVI.Data
             }
 
             return lista;
+        }
+
+        public List<Pedido> GetPedidosByUsuarioId(string usuarioId)
+        {
+            var pedidos = new List<Pedido>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(@"
+            SELECT Id, Usuario, Fecha, Total, Estado, UserId 
+            FROM Pedidos 
+            WHERE UserId = @UserId 
+            ORDER BY Fecha DESC", conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", usuarioId);
+
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            pedidos.Add(new Pedido
+                            {
+                                Id = (int)reader["Id"],
+                                Usuario = reader["Usuario"].ToString(),
+                                Fecha = (DateTime)reader["Fecha"],
+                                Total = (decimal)reader["Total"],
+                                Estado = reader["Estado"].ToString(),
+                                UserId = reader["UserId"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            return pedidos;
         }
 
     }

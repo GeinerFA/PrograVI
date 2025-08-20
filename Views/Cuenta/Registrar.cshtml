@@ -1,67 +1,234 @@
 ﻿@model ProyectoPrograVI.Models.Usuario
 @{
-    ViewData["Title"] = "Registrarse";
+    ViewData["Title"] = "Registrarse - Funko Shop";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4><i class="bi bi-person-plus"></i> Registro de Usuario</h4>
+<style>
+    .funko-bg {
+        background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 0;
+    }
+
+    .login-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 1000px;
+        width: 90%;
+    }
+
+    .funko-side {
+        background: linear-gradient(45deg, #3498db, #2ecc71);
+        color: white;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .funko-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .form-side {
+        padding: 2rem;
+    }
+
+    .funko-btn {
+        background: linear-gradient(45deg, #3498db, #2ecc71);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 30px;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .funko-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 2px solid #e3f2fd;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+    .funko-title {
+        font-family: 'Bangers', cursive;
+        letter-spacing: 2px;
+        color: #3498db;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-funko {
+        border: 2px solid #3498db;
+        color: #3498db;
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-funko:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        color: #e74c3c !important;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .alert-danger {
+        background-color: #ffeaea;
+        color: #e74c3c;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-select {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 2px solid #e3f2fd;
+        transition: all 0.3s ease;
+    }
+
+        .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+    .text-muted {
+        color: #7f8c8d !important;
+    }
+
+    @@media (max-width: 768px) {
+        .form-side {
+            padding: 1.5rem;
+        }
+
+        .funko-side {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="funko-bg">
+    <div class="login-container">
+        <div class="row g-0">
+            <div class="col-md-5 d-none d-md-block">
+                <div class="funko-side text-center">
+                    <div class="funko-icon">🧸</div>
+                    <h1 class="funko-title display-4">FUNKO SHOP</h1>
+                    <p class="mt-3">¡Únete a nuestra comunidad de coleccionistas!</p>
+                    <div class="mt-4">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect x='50' y='20' width='100' height='60' rx='10' fill='%233498db'/%3E%3Ccircle cx='80' y='40' r='8' fill='white'/%3E%3Ccircle cx='120' y='40' r='8' fill='white'/%3E%3Cpath d='M70,70 Q100,90 130,70' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E"
+                             alt="Funko Character" width="150" class="img-fluid">
+                    </div>
+                    <p class="mt-4"><i class="bi bi-star-fill"></i> Acceso a productos exclusivos <i class="bi bi-star-fill"></i></p>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="col-md-7">
+                <div class="form-side">
+                    <div class="text-center mb-4">
+                        <h2 class="funko-title">CREAR CUENTA</h2>
+                        <p class="text-muted">Regístrate para comenzar tu colección</p>
+                    </div>
+
                     @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-                    <form asp-action="Registrar" method="post">
-                        <div class="form-floating mb-3">
-                            <input asp-for="Nombre" class="form-control" placeholder="Nombre completo" />
-                            <label asp-for="Nombre">Nombre completo</label>
-                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                    <form action="/Cuenta/Registrar" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre completo</label>
+                            <input type="text" asp-for="Nombre" class="form-control" required />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Email" type="email" class="form-control" placeholder="Correo" />
-                            <label asp-for="Email">Correo electrónico</label>
-                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <input type="email" asp-for="Email" class="form-control" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña" />
-                            <label asp-for="Password">Contraseña</label>
-                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" asp-for="Password" class="form-control" required />
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Telefono" class="form-control" placeholder="Teléfono" />
-                            <label asp-for="Telefono">Teléfono</label>
-                            <span asp-validation-for="Telefono" class="text-danger small"></span>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" asp-for="Telefono" class="form-control" required />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Direccion" class="form-control" placeholder="Dirección" />
-                            <label asp-for="Direccion">Dirección</label>
-                            <span asp-validation-for="Direccion" class="text-danger small"></span>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" asp-for="Direccion" class="form-control" />
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label asp-for="Rol">Rol</label>
+                        <div class="mb-4">
+                            <label class="form-label">Rol</label>
                             <select asp-for="Rol" class="form-select">
                                 <option value="Usuario">Usuario</option>
                                 <option value="Administrador">Administrador</option>
                             </select>
-                            <span asp-validation-for="Rol" class="text-danger small"></span>
+                            <span asp-validation-for="Rol" class="text-danger"></span>
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Login" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left-circle"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Registrarse
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn funko-btn">
+                                <i class="bi bi-check-circle me-2"></i> Registrarse
                             </button>
                         </div>
                     </form>
+
+                    <div class="text-center">
+                        <a href="/Cuenta/Login" class="btn btn-outline-funko">
+                            <i class="bi bi-arrow-left-circle me-2"></i> Volver al Login
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,4 +239,21 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de registro cargada');
+
+            // Forzar el enfoque en el primer campo
+            document.querySelector('input[asp-for="Nombre"]')?.focus();
+
+            // Verificar que el formulario existe
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Formulario de registro enviado');
+                });
+            }
+        });
+    </script>
 }
