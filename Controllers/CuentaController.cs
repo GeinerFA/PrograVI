@@ -7,19 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class CuentaController : Controller
 {
-    private readonly string _connectionString = "Server=DEKTOP-EDWIN-MA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
+    // Cadena de conexión a la base de datos SQL Server
+    private readonly string _connectionString = "Server=JOHAN-MOYA\\SQLEXPRESS;Database=FunkoShop;Trusted_Connection=True;TrustServerCertificate=True;";
 
+    // ===========================
+    // LOGIN (GET)
+    // ===========================
+    // Muestra la vista del login
     public IActionResult Login() => View();
 
+    // ===========================
+    // LOGIN (POST)
+    // ===========================
+    // Recibe email y password, los valida en la BD usando un SP
     [HttpPost]
     public IActionResult Login(string email, string password)
     {
+        // Validación de campos vacíos
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
             ViewBag.Mensaje = "Email y contraseña son requeridos";
             return View();
         }
 
+        // Conexión a BD
         using (SqlConnection conn = new SqlConnection(_connectionString))
         {
             using (SqlCommand cmd = new SqlCommand("sp_LoginUsuario", conn))
@@ -33,6 +44,7 @@ public class CuentaController : Controller
                 {
                     if (reader.Read())
                     {
+                        // Guardar datos en la sesión
                         HttpContext.Session.SetInt32("UsuarioId", (int)reader["id_usuario"]);
                         HttpContext.Session.SetString("NombreUsuario", reader["nombre"].ToString());
                         HttpContext.Session.SetString("Rol", reader["rol"].ToString());
@@ -42,10 +54,15 @@ public class CuentaController : Controller
             }
         }
 
+        // Si no coincide usuario/contraseña
         ViewBag.Mensaje = "Email o contraseña incorrectos.";
         return View();
     }
 
+    // ===========================
+    // REGISTRAR (GET)
+    // ===========================
+    // Devuelve formulario de registro con lista de roles
     public IActionResult Registrar()
     {
         ViewBag.Roles = new List<SelectListItem>
@@ -56,9 +73,14 @@ public class CuentaController : Controller
         return View();
     }
 
+    // ===========================
+    // REGISTRAR (POST)
+    // ===========================
+    // Inserta un nuevo usuario usando SP
     [HttpPost]
     public IActionResult Registrar(Usuario usuario)
     {
+        // Si el modelo no es válido, regresa con la lista de roles
         if (!ModelState.IsValid)
         {
             ViewBag.Roles = new List<SelectListItem>
@@ -85,10 +107,11 @@ public class CuentaController : Controller
                 {
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Login"); // Redirige al login
                 }
                 catch (SqlException ex)
                 {
+                    // Manejo de error al registrar
                     ModelState.AddModelError("", "Error al registrar: " + ex.Message);
                     ViewBag.Roles = new List<SelectListItem>
                     {
@@ -101,11 +124,15 @@ public class CuentaController : Controller
         }
     }
 
+    // ===========================
+    // PERFIL (GET)
+    // ===========================
+    // Muestra los datos del usuario logueado
     public IActionResult Perfil()
     {
         var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
         if (usuarioId == null)
-            return RedirectToAction("Login");
+            return RedirectToAction("Login"); // Si no hay sesión, manda a login
 
         var usuario = new Usuario();
 
@@ -135,6 +162,10 @@ public class CuentaController : Controller
         return View(usuario);
     }
 
+    // ===========================
+    // ACTUALIZAR PERFIL (POST)
+    // ===========================
+    // Permite actualizar datos del perfil
     [HttpPost]
     public IActionResult ActualizarPerfil(Usuario usuario)
     {
@@ -165,7 +196,7 @@ public class CuentaController : Controller
             }
         }
 
-        // Actualizar datos en la sesión
+        // Refrescar datos de sesión
         HttpContext.Session.SetString("NombreUsuario", usuario.Nombre);
         HttpContext.Session.SetString("Email", usuario.Email);
 
@@ -173,6 +204,10 @@ public class CuentaController : Controller
         return RedirectToAction("Perfil");
     }
 
+    // ===========================
+    // LOGOUT
+    // ===========================
+    // Cierra la sesión y regresa al login
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();

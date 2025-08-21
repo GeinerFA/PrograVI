@@ -1,25 +1,30 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc.Rendering; 
 using ProyectoPrograVI.Data;
 using ProyectoPrograVI.Models;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using System.Security.Claims; 
+using Microsoft.AspNetCore.Http; 
 
 namespace ProyectoPrograVI.Controllers
 {
+    // Controlador para gestionar pedidos
     public class PedidoController : Controller
     {
         private readonly FunkoShop _repositorio;
 
+        // Constructor -> inicializa el repositorio de datos
         public PedidoController()
         {
             _repositorio = new FunkoShop();
         }
 
-        // Listar todos los pedidos
+        // ============================
+        // LISTAR PEDIDOS
+        // ============================
         public IActionResult Index()
         {
+            // Obtener usuario y rol desde la sesión
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
             var rol = HttpContext.Session.GetString("Rol");
 
@@ -27,29 +32,32 @@ namespace ProyectoPrograVI.Controllers
 
             if (rol == "Administrador")
             {
-                // Administradores ven todos los pedidos
+                // Los administradores ven todos los pedidos
                 pedidos = _repositorio.GetAllPedido();
             }
             else
             {
-                // Usuarios normales ven solo sus pedidos
+                // Los usuarios normales solo ven sus propios pedidos
                 pedidos = _repositorio.GetPedidosByUsuarioId(usuarioId.ToString());
             }
 
-            return View(pedidos);
+            return View(pedidos); // Pasamos la lista de pedidos a la vista
         }
 
-        // Crear un nuevo pedido desde el carrito
-        [Authorize] // opcional: si quieres que solo usuarios logueados puedan comprar
+        // ============================
+        // CREAR PEDIDO DESDE EL CARRITO
+        // ============================
+        [Authorize] // Solo usuarios logueados pueden crear pedidos
         [HttpPost]
         public IActionResult CrearPedido(List<CarritoItem> carrito)
         {
+            // Validación: si el carrito está vacío, error
             if (carrito == null || !carrito.Any())
             {
                 return BadRequest("El carrito está vacío");
             }
 
-            // Obtener el id del usuario autenticado
+            // Obtener id y nombre del usuario autenticado
             var userId = User.Identity.IsAuthenticated
                 ? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 : "Anonimo";
@@ -58,14 +66,14 @@ namespace ProyectoPrograVI.Controllers
                 ? User.Identity.Name
                 : "Anonimo";
 
-            // Construir pedido
+            // Construir el pedido con datos del carrito
             var pedido = new Pedido
             {
                 UserId = userId,
                 Usuario = usuario,
                 Fecha = DateTime.Now,
                 Total = carrito.Sum(c => c.Subtotal),
-                Estado = "En Proceso",
+                Estado = "En Proceso", // Estado inicial del pedido
                 Detalles = carrito.Select(c => new PedidoDetalle
                 {
                     ProductoId = c.IdProducto,
@@ -76,21 +84,23 @@ namespace ProyectoPrograVI.Controllers
                 }).ToList()
             };
 
-            // Guardar en la BD
+            // Guardar pedido en BD
             int pedidoId = _repositorio.CrearPedido(pedido);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index"); // Redirige a la lista de pedidos
         }
 
-        // Editar estado (GET)
+        // ============================
+        // EDITAR ESTADO DEL PEDIDO (GET)
+        // ============================
         [HttpGet]
         public IActionResult EditarEstado(int id)
         {
-            // Verificar permisos antes de editar
+            // Verificar permisos -> solo administradores pueden editar estado
             var rol = HttpContext.Session.GetString("Rol");
             if (rol != "Administrador")
             {
-                return RedirectToAction("Index", "Home"); // O mostrar error de permisos
+                return RedirectToAction("Index", "Home"); // Sin permisos -> redirige
             }
 
             var pedido = _repositorio.GetById(id);
@@ -100,6 +110,7 @@ namespace ProyectoPrograVI.Controllers
                 return NotFound();
             }
 
+            // Lista de estados posibles para el pedido (dropdown en la vista)
             ViewBag.Estados = new List<SelectListItem>
             {
                 new SelectListItem { Value = "En Proceso", Text = "En Proceso" },
@@ -110,23 +121,26 @@ namespace ProyectoPrograVI.Controllers
             return View(pedido);
         }
 
-        // Editar estado (POST)
+        // ============================
+        // EDITAR ESTADO DEL PEDIDO (POST)
+        // ============================
         [HttpPost]
         public IActionResult EditarEstado(int id, string estado)
         {
             if (!string.IsNullOrEmpty(estado))
             {
+                // Actualiza el estado en BD
                 _repositorio.ActualizarEstado(id, estado);
                 return RedirectToAction("Index");
             }
 
+            // Si hubo error, recargar pedido y lista de estados
             var pedido = _repositorio.GetById(id);
             if (pedido == null)
             {
                 return NotFound();
             }
 
-            // Recargar estados si hubo error
             ViewBag.Estados = new List<SelectListItem>
             {
                 new SelectListItem { Value = "En Proceso", Text = "En Proceso" },
@@ -136,6 +150,10 @@ namespace ProyectoPrograVI.Controllers
 
             return View(pedido);
         }
+
+        // ============================
+        // DETALLE DE UN PEDIDO
+        // ============================
         public IActionResult DetallePedido(int id)
         {
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
@@ -146,15 +164,13 @@ namespace ProyectoPrograVI.Controllers
             if (pedido == null)
                 return NotFound();
 
-            // Verificar que el usuario tenga permiso para ver este pedido
+            // Solo el admin o el dueño del pedido pueden verlo
             if (rol != "Administrador" && pedido.UserId != usuarioId.ToString())
             {
-                return RedirectToAction("Index", "Home"); // O mostrar error de permisos
+                return RedirectToAction("Index", "Home"); // Sin permisos
             }
 
-            return View("DetallePedido", pedido);
+            return View("DetallePedido", pedido); // Muestra la vista con detalle
         }
-
-
     }
 }

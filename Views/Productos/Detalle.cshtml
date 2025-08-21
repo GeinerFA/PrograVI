@@ -58,14 +58,14 @@
 
 <div class="container mt-4">
     <div class="row">
-        <!-- Imagen con zoom dinámico -->
+        
         <div class="col-md-5">
             <div class="zoom-container">
                 <img src="@Model.ImagenUrl" class="img-fluid zoom-img" alt="@Model.Nombre" />
             </div>
         </div>
 
-        <!-- Detalles del producto -->
+       
         <div class="col-md-7">
             <h2>@Model.Nombre</h2>
             <p>@Model.Descripcion</p>
@@ -73,7 +73,7 @@
             <p><strong>Categoría:</strong> @Model.NombreCategoria</p>
             <p><strong>Disponibles:</strong> @Model.CantStock</p>
 
-            <!-- Formulario y botón de retroceso alineados -->
+            
             <div class="d-flex gap-2 align-items-end">
                 <form asp-controller="Carrito" asp-action="AgregarAlCarrito" method="post" class="d-flex flex-column">
                     @Html.AntiForgeryToken()

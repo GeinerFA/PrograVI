@@ -220,10 +220,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página cargada - formulario listo');
 
-        // Forzar el enfoque en el primer campo
         document.querySelector('input[name="email"]')?.focus();
 
-        // Verificar que el formulario existe
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function(e) {
@@ -231,7 +229,6 @@
             });
         }
 
-        // Verificar que el botón de registro funciona
         const registerBtn = document.querySelector('a[href="/Cuenta/Registrar"]');
         if (registerBtn) {
             registerBtn.addEventListener('click', function() {

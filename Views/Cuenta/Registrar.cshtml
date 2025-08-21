@@ -244,10 +244,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Página de registro cargada');
 
-            // Forzar el enfoque en el primer campo
             document.querySelector('input[asp-for="Nombre"]')?.focus();
 
-            // Verificar que el formulario existe
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', function(e) {

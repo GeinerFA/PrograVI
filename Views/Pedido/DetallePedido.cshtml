@@ -3,11 +3,11 @@
 @{
     ViewData["Title"] = "Detalle del Pedido";
 
-    // Determinar clase del badge con la misma lógica del listado
+    
     var badgeClass =
         Model.Estado == "En Proceso" ? "bg-warning text-dark" :
         Model.Estado == "Enviado" ? "bg-info text-dark" :
-        "bg-success"; // cualquier otro caso (incluye "Entregado")
+        "bg-success"; 
 }
 
 <h2 class="mb-4">📑 Detalle del Pedido #@Model.Id</h2>
